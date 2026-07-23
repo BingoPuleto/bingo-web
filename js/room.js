@@ -194,12 +194,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   BingoSocket.on('PLAYER_KICKED', (player) => {
-    if (player.id === session.playerId) {
-      alert('Você foi removido da sala pelo host.');
-      Storage.clear();
-      window.location.href = '../index.html';
-      return;
-    }
+    // TEMPORÁRIO (modo de teste): redirecionamento por expulsão desativado.
+    // O jogador expulso continua vendo a sala normalmente no front-end,
+    // mesmo já tendo sido removido no backend. Reativar antes de ir pra
+    // produção: veja o histórico do arquivo pra restaurar o alert +
+    // Storage.clear() + redirect.
+    if (player.id === session.playerId) return;
+
     players = players.filter((p) => p.id !== player.id);
     renderPlayers();
   });
