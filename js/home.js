@@ -31,6 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  const roomCodeInput = document.getElementById('room-code');
+  roomCodeInput.addEventListener('input', () => {
+    const cleaned = roomCodeInput.value.replace(/[^A-Za-z0-9]/g, '');
+    if (cleaned !== roomCodeInput.value) roomCodeInput.value = cleaned;
+  });
+
   // Alterna entre a aba "Criar sala" e "Entrar em sala".
   tabButtons.forEach((btn) => {
     btn.addEventListener('click', () => {

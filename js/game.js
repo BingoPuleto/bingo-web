@@ -123,9 +123,42 @@ document.addEventListener('DOMContentLoaded', async () => {
       const isMarked = autoMarkNumbers ? isDrawn : manuallyMarked.has(item.number);
       if (isMarked) cell.classList.add('marked');
 
+      // No modo manual, só faz sentido poder clicar em números já
+      // sorteados (não dá pra "adivinhar" e marcar antes da hora).
+      if (!autoMarkNumbers && isDrawn) {
+        cell.setAttribute('role', 'button');
+        cell.setAttribute('tabindex', '0');
+      }
+
       bingoCardEl.appendChild(cell);
     });
   }
+
+  function toggleManualMark(number) {
+    if (autoMarkNumbers) return;
+    if (!drawnNumbers.includes(number)) return; // não deixa marcar número que ainda não saiu
+
+    if (manuallyMarked.has(number)) {
+      manuallyMarked.delete(number);
+    } else {
+      manuallyMarked.add(number);
+    }
+    renderCard();
+  }
+
+  bingoCardEl.addEventListener('click', (event) => {
+    const cell = event.target.closest('.cell[data-number]');
+    if (!cell) return;
+    toggleManualMark(Number(cell.dataset.number));
+  });
+
+  bingoCardEl.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    const cell = event.target.closest('.cell[data-number]');
+    if (!cell) return;
+    event.preventDefault();
+    toggleManualMark(Number(cell.dataset.number));
+  });
 
   function renderWinners(winners) {
     if (!winners || winners.length === 0) {
@@ -364,17 +397,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   BingoSocket.on('PLAYER_LEFT', (player) => {
-    if (player.id === session.playerId) {
-      alert('Você foi removido da sala pelo host.');
-      stopAutoDraw();
-      Voice.stop();
-      BingoSocket.disconnect();
-      Storage.clear();
-      window.location.href = '../index.html';
-      return;
+    // Disparado tanto em saída voluntária quanto em queda de conexão
+    // (reconexão do WebSocket) — não é expulsão. Só atualiza status.
+    if (player.id === session.playerId) return;
+
+    const existing = players.find((p) => p.id === player.id);
+    if (existing) {
+      existing.connected = player.connected;
+      renderHostPlayerList();
     }
-    players = players.filter((p) => p.id !== player.id);
-    renderHostPlayerList();
   });
 
   if (!session.host) {
