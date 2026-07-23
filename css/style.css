@@ -1,0 +1,582 @@
+/* =========================================================
+   Bingo Puleto — Design System
+   Tokens + base/shared components (app shell, buttons, forms,
+   badges, panels, error box). Screen-specific layout lives in
+   home.css / room.css / game.css.
+========================================================= */
+
+:root {
+  /* ---- Brand accents ---- */
+  --accent-signal: #6D5EF0;
+  --accent-signal-strong: #5A4AE0;
+  --accent-signal-subtle: #EEEBFD;
+  --accent-signal-text-on: #FFFFFF;
+
+  --accent-draw: #C9821A;
+  --accent-draw-subtle: #FBEBD3;
+  --accent-draw-text-on: #1A1200;
+
+  /* ---- Neutrals (Daylight / light, default fallback) ---- */
+  --bg-canvas: #FAFAFA;
+  --bg-surface: #FFFFFF;
+  --bg-surface-raised: #FFFFFF;
+  --bg-surface-sunken: #F2F2F5;
+
+  --border-subtle: #E7E7EC;
+  --border-default: #D8D8E0;
+
+  --text-primary: #16161D;
+  --text-secondary: #5B5B68;
+  --text-tertiary: #8B8B98;
+  --text-on-accent: #FFFFFF;
+
+  --success: #1A8F5E;
+  --success-subtle: #E1F5EC;
+  --warning: #B7791F;
+  --warning-subtle: #FBF0DC;
+  --danger: #C4302B;
+  --danger-subtle: #FBE4E3;
+  --info: #2F6FE0;
+  --info-subtle: #E7EFFD;
+
+  --shadow-sm: 0 1px 2px rgba(16, 16, 24, 0.06);
+  --shadow-md: 0 1px 2px rgba(16, 16, 24, 0.05), 0 8px 24px rgba(16, 16, 24, 0.08);
+  --shadow-lg: 0 4px 8px rgba(16, 16, 24, 0.06), 0 24px 48px rgba(16, 16, 24, 0.14);
+  --border-strength: 1px;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  --font-ui: 'Inter', 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', 'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+  --dur-slow: 250ms;
+
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg-canvas: #0D0D12;
+  --bg-surface: #15151C;
+  --bg-surface-raised: #1C1C26;
+  --bg-surface-sunken: #0A0A0E;
+
+  --border-subtle: #25252F;
+  --border-default: #33333F;
+
+  --text-primary: #F3F3F6;
+  --text-secondary: #A5A5B4;
+  --text-tertiary: #6E6E7D;
+  --text-on-accent: #0D0D12;
+
+  --accent-signal: #8C7FFF;
+  --accent-signal-strong: #A296FF;
+  --accent-signal-subtle: #221F3B;
+  --accent-signal-text-on: #0D0D12;
+
+  --accent-draw: #F0B347;
+  --accent-draw-subtle: #332612;
+  --accent-draw-text-on: #1A1200;
+
+  --success: #3DD68C;
+  --success-subtle: #12291F;
+  --warning: #F0B347;
+  --warning-subtle: #332612;
+  --danger: #F0645F;
+  --danger-subtle: #331413;
+  --info: #6FA3FF;
+  --info-subtle: #131E33;
+
+  --shadow-sm: 0 1px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 1px 0 rgba(0, 0, 0, 0.3), 0 0 0 1px var(--border-subtle);
+  --shadow-lg: 0 0 0 1px var(--border-default), 0 24px 48px rgba(0, 0, 0, 0.55), 0 0 40px -12px color-mix(in srgb, var(--accent-signal) 35%, transparent);
+
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------
+   Base
+--------------------------------------------------------- */
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+  transition: background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-16);
+}
+
+.page-home {
+  max-width: 480px;
+  padding-top: var(--space-16);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-ui);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------
+   App shell header
+--------------------------------------------------------- */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
+  border-bottom: 1px solid var(--border-subtle);
+  text-align: left;
+  position: relative;
+}
+
+.app-header h1 {
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+.app-header .subtitle {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.page-home .app-header .subtitle {
+  text-align: left;
+  flex: none;
+}
+
+.page-home .app-header {
+  flex-wrap: wrap;
+}
+
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.theme-toggle:hover {
+  background: var(--bg-surface-sunken);
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+.theme-toggle span {
+  display: inline-block;
+  transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out);
+}
+
+/* ---------------------------------------------------------
+   Focus ring (shared, both themes)
+--------------------------------------------------------- */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent-signal);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------------------------------------------------------
+   Panels
+--------------------------------------------------------- */
+
+.card-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+  transition: background-color var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+}
+
+.card-panel h2 {
+  font-size: 20px;
+  line-height: 28px;
+  margin-bottom: var(--space-4);
+  letter-spacing: -0.01em;
+}
+
+.card-panel h3 {
+  font-size: 16px;
+  line-height: 24px;
+  margin-bottom: var(--space-2);
+}
+
+/* Emphasis tier — the "hero" surfaces per screen */
+.panel-hero {
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-subtle);
+}
+
+/* Sunken tier — quiet, read-only info */
+.panel-settings,
+.panel-cardstatus {
+  background: var(--bg-surface-sunken);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* ---------------------------------------------------------
+   Forms
+--------------------------------------------------------- */
+
+.field {
+  margin-bottom: var(--space-4);
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: var(--space-3);
+  background: var(--bg-surface-sunken);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.field input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--accent-signal);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-signal) 25%, transparent);
+}
+
+.field input:focus-visible,
+.field select:focus-visible {
+  outline: none;
+}
+
+/* Room code field gets special monospace/license-key treatment */
+#room-code {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* Checkboxes restyled as toggle switches (no markup change) */
+.field label:has(input[type='checkbox']) {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.field input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 36px;
+  height: 20px;
+  min-width: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-surface-sunken);
+  border: 1px solid var(--border-default);
+  position: relative;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+
+.field input[type='checkbox']::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.field input[type='checkbox']:checked {
+  background: var(--accent-signal);
+  border-color: var(--accent-signal);
+}
+
+.field input[type='checkbox']:checked::after {
+  transform: translateX(16px);
+  background: var(--text-on-accent);
+}
+
+/* Native <select> restyled as a segmented-control look */
+.field select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 18px) center, calc(100% - 13px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  color: var(--text-primary);
+  padding-right: var(--space-8);
+}
+
+/* ---------------------------------------------------------
+   Buttons
+--------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid transparent;
+  transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  color: var(--text-tertiary);
+  border-color: var(--border-subtle);
+  background: var(--bg-surface-sunken) !important;
+}
+
+.btn-primary {
+  background: var(--accent-signal);
+  color: var(--accent-signal-text-on);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-signal-strong);
+}
+
+.btn-secondary {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-surface-sunken);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger);
+  color: #fff;
+}
+
+.btn-success {
+  background: var(--success);
+  color: var(--text-on-accent);
+}
+
+[data-theme='dark'] .btn-success {
+  color: #072216;
+}
+
+.btn-success:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+/* ---------------------------------------------------------
+   Error box (treated as an alert surface, aria-live in markup
+   is unchanged; visual only)
+--------------------------------------------------------- */
+
+.error-box {
+  background: var(--danger-subtle);
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
+  color: var(--danger);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-4);
+  font-size: 14px;
+  font-weight: 500;
+  animation: fade-in var(--dur-base) var(--ease-out);
+}
+
+.error-box[hidden] {
+  display: none;
+}
+
+/* ---------------------------------------------------------
+   Badges & status
+--------------------------------------------------------- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+.badge-host {
+  background: var(--accent-signal-subtle);
+  color: var(--accent-signal);
+}
+
+.badge-online {
+  background: var(--success-subtle);
+  color: var(--success);
+}
+
+.badge-offline {
+  background: var(--bg-surface-sunken);
+  color: var(--text-tertiary);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.status-dot.online {
+  background: var(--success);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 20%, transparent);
+}
+
+.text-muted {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* ---------------------------------------------------------
+   Action rows
+--------------------------------------------------------- */
+
+.action-row {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.action-row .btn {
+  width: auto;
+  flex: 1;
+}
+
+.panel-footer {
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---------------------------------------------------------
+   Shared animation keyframes
+--------------------------------------------------------- */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-draw) 55%, transparent); }
+  100% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent-draw) 0%, transparent); }
+}
+
+/* ---------------------------------------------------------
+   Inline icons (substituem emojis por SVG)
+--------------------------------------------------------- */
+
+.icon-inline {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  display: inline-block;
+}

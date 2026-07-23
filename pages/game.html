@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jogo · Bingo Puleto</title>
+  <script src="../js/theme.js"></script>
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/room.css" />
+  <link rel="stylesheet" href="../css/game.css" />
+  <link rel="shortcut icon" href="../assets/icons/favicon.svg" type="image/x-icon">
+</head>
+<body>
+  <header class="app-header app-header-sticky">
+    <h1><img src="../assets/icons/bingo-ball.svg" alt="" class="icon-inline" aria-hidden="true"> Bingo Puleto</h1>
+    <p class="subtitle" id="room-code-subtitle">Sala ------</p>
+    <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Alternar tema" aria-pressed="false">
+      <img id="theme-toggle-icon" src="../assets/icons/sun.svg" alt="" class="icon-inline" aria-hidden="true">
+    </button>
+  </header>
+
+  <div class="alerts-wrapper">
+    <div id="error-box" class="error-box" hidden></div>
+    <div id="game-over-banner" class="game-over-banner" hidden></div>
+  </div>
+
+  <main class="container page-game">
+
+    <div class="card-panel panel-hero last-number">
+      <div class="label">Último número sorteado</div>
+      <div class="value" id="last-number-value">--</div>
+    </div>
+
+    <div class="card-panel panel-board">
+      <h2>Números sorteados</h2>
+      <div class="drawn-numbers" id="drawn-numbers"></div>
+    </div>
+
+    <div class="card-panel panel-card">
+      <h2>Sua cartela</h2>
+      <p class="text-muted" id="mark-mode-hint"></p>
+      <div class="bingo-card" id="bingo-card"></div>
+      <div class="action-row">
+        <button id="claim-line-btn" class="btn btn-secondary">Bingo (linha)</button>
+        <button id="claim-full-btn" class="btn btn-success">Bingo (cartela cheia)</button>
+      </div>
+    </div>
+
+    <div class="card-panel panel-winners">
+      <h2>Vencedores</h2>
+      <ul class="winners-list" id="winners-list">
+        <li class="text-muted">Ninguém venceu ainda.</li>
+      </ul>
+    </div>
+
+    <aside class="card-panel panel-drawer" id="host-sidebar" hidden>
+      <h2>Painel do host</h2>
+
+      <section>
+        <h3>Sortear número</h3>
+        <div class="action-row">
+          <button id="draw-number-btn" class="btn btn-primary">Sortear</button>
+        </div>
+      </section>
+
+      <section>
+        <h3>Anúncio por voz</h3>
+        <p class="text-muted" id="voice-announcement-status"></p>
+        <div class="action-row">
+          <button id="voice-announcement-toggle" class="btn btn-secondary" type="button" aria-pressed="false">
+            <img src="../assets/icons/volume-on.svg" alt="" class="icon-inline" aria-hidden="true"> Ativar anúncio por voz
+          </button>
+        </div>
+      </section>
+
+      <section>
+        <h3>Sorteio automático</h3>
+        <p class="text-muted">O timer roda nesta aba — mantenha-a aberta enquanto ativo.</p>
+        <p class="text-muted" id="auto-draw-status">Desativado.</p>
+        <div class="field">
+          <label for="auto-draw-toggle">Status</label>
+          <select id="auto-draw-toggle">
+            <option value="disabled" selected>Desativado</option>
+            <option value="enabled">Ativado</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="auto-draw-interval">Intervalo (segundos)</label>
+          <input type="number" id="auto-draw-interval" min="3" max="60" value="10" />
+        </div>
+      </section>
+
+      <section>
+        <h3>Encerrar jogo</h3>
+        <p class="text-muted">O jogo continua após um bingo válido — encerre só quando quiser parar de vez.</p>
+        <div class="action-row">
+          <button id="finish-game-btn" class="btn btn-danger">Encerrar jogo</button>
+        </div>
+      </section>
+
+      <section>
+        <h3>Jogadores ativos</h3>
+        <ul id="host-player-list"></ul>
+      </section>
+    </aside>
+
+    <div class="action-row panel-footer">
+      <button id="leave-room-btn" class="btn btn-danger">Sair da sala</button>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+  <script src="https://unpkg.com/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/socket.js"></script>
+  <script src="../js/voice.js"></script>
+  <script src="../js/game.js"></script>
+</body>
+</html>

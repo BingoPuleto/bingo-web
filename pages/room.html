@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sala de espera · Bingo Puleto</title>
+  <script src="../js/theme.js"></script>
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/room.css" />
+  <link rel="shortcut icon" href="../assets/icons/favicon.svg" type="image/x-icon">
+</head>
+<body>
+  <main class="container page-room">
+    <header class="app-header">
+      <h1><img src="../assets/icons/bingo-ball.svg" alt="" class="icon-inline" aria-hidden="true"> Bingo Puleto</h1>
+      <p class="subtitle">Sala de espera</p>
+      <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Alternar tema" aria-pressed="false">
+        <img id="theme-toggle-icon" src="../assets/icons/sun.svg" alt="" class="icon-inline" aria-hidden="true">
+      </button>
+    </header>
+
+    <div id="error-box" class="error-box" hidden></div>
+
+    <div class="card-panel panel-hero room-code-display">
+      <div class="code" id="room-code-value">------</div>
+      <div class="hint">Compartilhe este código com os outros jogadores</div>
+    </div>
+
+    <div class="card-panel panel-roster">
+      <h2>Jogadores (<span id="player-count">0</span>)</h2>
+      <ul class="player-list" id="player-list"></ul>
+    </div>
+
+    <aside class="card-panel panel-drawer" id="host-sidebar">
+      <h2>Configurações</h2>
+
+      <section>
+        <h3>Ações da sala</h3>
+        <p class="text-muted">É necessário pelo menos 2 jogadores para iniciar.</p>
+        <div class="action-row">
+          <button id="start-game-btn" class="btn btn-primary" disabled>Iniciar jogo</button>
+        </div>
+      </section>
+
+      <section id="host-settings" hidden>
+        <h3>Marcação de números</h3>
+        <p class="text-muted" id="mark-mode-hint">Automática: os números sorteados são marcados na cartela de cada jogador.</p>
+        <div class="field">
+          <label for="mark-mode-select">Modo</label>
+          <select id="mark-mode-select">
+            <option value="auto" selected>Automática</option>
+            <option value="manual">Manual</option>
+          </select>
+        </div>
+        <p class="text-muted settings-footer-note">Só pode ser alterado antes do jogo começar.</p>
+      </section>
+
+      <section id="win-types-settings" hidden>
+        <h3>Tipos de vitória</h3>
+        <p class="text-muted" id="win-types-hint"></p>
+        <div class="field">
+          <label><input type="checkbox" id="allow-line-win-checkbox" checked /> Linha</label>
+        </div>
+        <div class="field">
+          <label><input type="checkbox" id="allow-full-win-checkbox" checked /> Cartela cheia</label>
+        </div>
+        <p class="text-muted settings-footer-note">Só pode ser alterado antes do jogo começar.</p>
+      </section>
+
+      <section>
+        <h3>Resumo</h3>
+        <p class="text-muted">Marcação: <span id="mark-mode-value">Automática</span></p>
+        <p class="text-muted">Vitória: <span id="win-types-value">Linha e cartela cheia</span></p>
+      </section>
+    </aside>
+
+    <div class="action-row panel-footer">
+      <button id="leave-room-btn" class="btn btn-danger">Sair da sala</button>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+  <script src="https://unpkg.com/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/socket.js"></script>
+  <script src="../js/room.js"></script>
+</body>
+</html>

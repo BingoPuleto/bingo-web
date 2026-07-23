@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bingo Puleto</title>
+  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/home.css" />
+  <link rel="shortcut icon" href="assets/icons/favicon.svg" type="image/x-icon">
+</head>
+<body>
+  <main class="container page-home">
+    <header class="app-header">
+      <h1><img src="assets/icons/bingo-ball.svg" alt="" class="icon-inline" aria-hidden="true"> Bingo Puleto</h1>
+      <p class="subtitle">Crie uma sala ou entre com um código para jogar</p>
+      <button id="theme-toggle-btn" class="theme-toggle" type="button" aria-label="Alternar tema" aria-pressed="false">
+        <img id="theme-toggle-icon" src="assets/icons/sun.svg" alt="" class="icon-inline" aria-hidden="true">
+      </button>
+    </header>
+
+    <div id="error-box" class="error-box" hidden></div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="create">Criar sala</button>
+      <button class="tab-btn" data-tab="join">Entrar em sala</button>
+    </div>
+
+    <section id="tab-create" class="tab-panel">
+      <form id="create-room-form" class="card-panel">
+        <h2>Criar uma nova sala</h2>
+        <div class="field">
+          <label for="host-nickname">Seu nome</label>
+          <input type="text" id="host-nickname" maxlength="30" placeholder="Ex: Maria" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Criar sala</button>
+      </form>
+    </section>
+
+    <section id="tab-join" class="tab-panel" hidden>
+      <form id="join-room-form" class="card-panel">
+        <h2>Entrar em uma sala existente</h2>
+        <div class="field">
+          <label for="room-code">Código da sala</label>
+          <input type="text" id="room-code" maxlength="6" placeholder="Ex: A1B2C3" required />
+        </div>
+        <div class="field">
+          <label for="player-nickname">Seu nome</label>
+          <input type="text" id="player-nickname" maxlength="30" placeholder="Ex: João" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Entrar</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/storage.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

@@ -1,0 +1,370 @@
+/* =========================================================
+   Game screen
+========================================================= */
+
+.app-header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-canvas);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: var(--space-3) var(--space-6);
+  margin-bottom: 0;
+}
+
+.alerts-wrapper {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-4) 0;
+}
+
+.alerts-wrapper .error-box,
+.alerts-wrapper .game-over-banner {
+  margin-bottom: 0;
+}
+
+.page-game {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  padding-top: var(--space-6);
+}
+
+/* ---------------------------------------------------------
+   Host: remove card do grid
+--------------------------------------------------------- */
+
+body.is-host .panel-card {
+  display: none;
+}
+
+/* ---------------------------------------------------------
+   Não-host: coluna única centrada (todos os tamanhos)
+--------------------------------------------------------- */
+
+body:not(.is-host) .page-game {
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "card"
+    "winners"
+    "footer";
+}
+
+body:not(.is-host) .panel-hero.last-number,
+body:not(.is-host) .panel-board,
+body:not(.is-host) .panel-drawer {
+  display: none;
+}
+
+body:not(.is-host) .panel-card    { grid-area: card; }
+body:not(.is-host) .panel-winners { grid-area: winners; }
+body:not(.is-host) .panel-footer  { grid-area: footer; }
+
+/* ---------------------------------------------------------
+   Desktop: two-column, drawer always on the right
+--------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .page-game {
+    grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr);
+    column-gap: var(--space-6);
+    align-items: start;
+    grid-template-areas:
+      "hero    drawer"
+      "board   drawer"
+      "card    drawer"
+      "winners drawer"
+      "footer  drawer";
+  }
+
+  .panel-hero.last-number { grid-area: hero; }
+  .panel-board            { grid-area: board; }
+  .panel-card             { grid-area: card; }
+  .panel-winners          { grid-area: winners; }
+  .panel-drawer           { grid-area: drawer; position: sticky; top: calc(56px + var(--space-6)); }
+  .panel-footer           { grid-area: footer; }
+}
+
+/* ---------------------------------------------------------
+   Mobile: single column, ordered
+--------------------------------------------------------- */
+
+@media (max-width: 1023px) {
+  .container.page-game {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-hero.last-number { order: 1; }
+  .panel-board            { order: 2; }
+  .panel-card             { order: 3; }
+  .panel-drawer           { order: 4; }
+  .panel-winners          { order: 5; }
+  .panel-footer           { order: 7; }
+}
+
+/* ---------------------------------------------------------
+   Last-number hero
+--------------------------------------------------------- */
+
+.last-number {
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.last-number::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--accent-draw) 18%, transparent), transparent 70%);
+  pointer-events: none;
+}
+
+.last-number .label {
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  position: relative;
+}
+
+.last-number .value {
+  font-family: var(--font-mono);
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 600;
+  color: var(--accent-draw);
+  position: relative;
+  animation: number-in var(--dur-base) var(--ease-out);
+}
+
+@keyframes number-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ---------------------------------------------------------
+   Drawn numbers
+--------------------------------------------------------- */
+
+.drawn-numbers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  max-height: 180px;
+  overflow-y: auto;
+  padding: var(--space-1);
+}
+
+.drawn-numbers .chip {
+  font-family: var(--font-mono);
+  background: var(--accent-draw-subtle);
+  border: 1px solid color-mix(in srgb, var(--accent-draw) 40%, transparent);
+  color: var(--text-primary);
+  border-radius: var(--radius-pill);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+  animation: chip-in var(--dur-fast) var(--ease-out);
+}
+
+.drawn-numbers .chip:last-child {
+  background: var(--accent-draw);
+  color: var(--accent-draw-text-on);
+  border-color: var(--accent-draw);
+  animation: pulse-ring 900ms var(--ease-out);
+}
+
+@keyframes chip-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ---------------------------------------------------------
+   Bingo card — never absolute, always in flow
+--------------------------------------------------------- */
+
+.panel-card {
+  background: color-mix(in srgb, var(--accent-draw) 3%, var(--bg-surface));
+  box-shadow: var(--shadow-md);
+  position: static;
+}
+
+.bingo-card {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-2);
+}
+
+.bingo-card .cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--text-primary);
+  position: static;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+  cursor: default;
+}
+
+.bingo-card .cell:nth-child(-n+5) {
+  background: transparent;
+  border: none;
+  color: var(--accent-signal);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  aspect-ratio: auto;
+  height: 24px;
+}
+
+.bingo-card .cell.free {
+  background: var(--accent-signal-subtle);
+  color: var(--accent-signal);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.bingo-card .cell.marked {
+  background: var(--accent-draw-subtle);
+  color: var(--accent-draw);
+  border-color: var(--accent-draw);
+  animation: cell-pop var(--dur-fast) var(--ease-out);
+}
+
+@keyframes cell-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.bingo-card .cell[role='button'] { cursor: pointer; }
+
+.bingo-card .cell:hover:not(.free)  { border-color: var(--accent-draw); }
+.bingo-card .cell:active:not(.free) { transform: scale(0.96); }
+
+/* ---------------------------------------------------------
+   Winners list
+--------------------------------------------------------- */
+
+.winners-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-1);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 14px;
+  animation: fade-in var(--dur-base) var(--ease-out);
+}
+
+.winners-list li:last-child {
+  border-bottom: none;
+}
+
+/* ---------------------------------------------------------
+   Game-over banner
+--------------------------------------------------------- */
+
+.game-over-banner {
+  background: var(--success-subtle);
+  border: 1px solid color-mix(in srgb, var(--success) 45%, transparent);
+  color: var(--success);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: var(--space-6);
+  animation: scale-in var(--dur-base) var(--ease-out);
+}
+
+.game-over-banner[hidden] {
+  display: none;
+}
+
+/* ---------------------------------------------------------
+   Host drawer
+--------------------------------------------------------- */
+
+.panel-drawer {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-sm);
+}
+
+.panel-drawer > h2 {
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--space-4);
+}
+
+.panel-drawer section {
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.panel-drawer section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.panel-drawer section:first-of-type {
+  padding-top: 0;
+}
+
+.panel-drawer h3 {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+}
+
+#host-player-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 14px;
+}
+
+#host-player-list li:last-child {
+  border-bottom: none;
+}
+
+/* ---------------------------------------------------------
+   Auto-draw status
+--------------------------------------------------------- */
+
+#auto-draw-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}

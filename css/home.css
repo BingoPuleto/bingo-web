@@ -1,0 +1,81 @@
+/* =========================================================
+   Home / Landing
+========================================================= */
+
+.page-home .app-header h1 {
+  font-size: 22px;
+}
+
+.tabs {
+  display: flex;
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+}
+
+.tab-btn {
+  padding: var(--space-2) 0 var(--space-3);
+  color: var(--text-tertiary);
+  font-weight: 600;
+  font-size: 14px;
+  position: relative;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--accent-signal);
+  border-radius: var(--radius-pill);
+  transform: scaleX(0);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.tab-btn.active {
+  color: var(--text-primary);
+}
+
+.tab-btn.active::after {
+  transform: scaleX(1);
+}
+
+.tab-btn:hover:not(.active) {
+  color: var(--text-secondary);
+}
+
+.tab-panel[hidden] {
+  display: none;
+}
+
+.tab-panel {
+  animation: fade-in var(--dur-base) var(--ease-out);
+}
+
+.page-home .card-panel {
+  box-shadow: var(--shadow-md);
+  padding: var(--space-6);
+}
+
+.page-home form h2 {
+  margin-bottom: var(--space-6);
+}
+
+@media (max-width: 480px) {
+  .page-home {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+
+  .field input {
+    min-height: 48px;
+  }
+
+  .btn {
+    min-height: 48px;
+  }
+}
