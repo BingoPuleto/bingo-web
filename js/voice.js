@@ -101,7 +101,7 @@ const Voice = (() => {
     try {
       let text;
 
-      if (number === 69) text = `Lá ele! Número ${number}`;
+      if (number === 69) text = `Lá ele! Número meia nove`;
       else if (BINGO_CALLS[number]) text = `${BINGO_CALLS[number]}, Número ${number}`;
       else if (BINGO_CALLS_NOREPEAT[number]) text = `Número ${BINGO_CALLS_NOREPEAT[number]}`;
       else text = `Número ${number}`;  

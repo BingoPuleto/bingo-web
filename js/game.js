@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const claimFullBtn = document.getElementById('claim-full-btn');
   const winnersListEl = document.getElementById('winners-list');
   const leaveRoomBtn = document.getElementById('leave-room-btn');
+  const cardSplashEl = document.getElementById('card-splash');
+  const bingoToastContainer = document.getElementById('bingo-toast-container');
   const voiceAnnouncementToggle = document.getElementById('voice-announcement-toggle');
   const voiceAnnouncementStatus = document.getElementById('voice-announcement-status');
 
@@ -42,6 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let lineClaimed = false;
   const myWinTypes = new Set();
+  let winnersCache = [];
 
   function showError(message) {
     errorBox.textContent = message;
@@ -194,6 +197,67 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ---------------------------------------------------------
+  // Notificação de bingo (topo da tela)
+  // ---------------------------------------------------------
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function showBingoToast(winner) {
+    if (!bingoToastContainer) return;
+    const modalidade = winner.winType === 'FULL' ? 'Cartela cheia' : 'Linha';
+    const toast = document.createElement('div');
+    toast.className = 'bingo-toast';
+    toast.innerHTML = `
+      <span class="bingo-toast-icon" aria-hidden="true">🏆</span>
+      <span><strong>${escapeHtml(winner.playerNickname)}</strong> fez BINGO!
+        <span class="bingo-toast-badge">${modalidade}</span>
+      </span>
+    `;
+    bingoToastContainer.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('is-visible'));
+
+    setTimeout(() => {
+      toast.classList.remove('is-visible');
+      toast.classList.add('is-leaving');
+      setTimeout(() => toast.remove(), 300);
+    }, 5000);
+  }
+
+  // Só notifica quando o bingo em questão é o "último" da modalidade em jogo:
+  // se linha e cartela cheia estiverem ativas ao mesmo tempo, a linha é uma
+  // etapa intermediária (não notifica) e só a cartela cheia é o bingo final.
+  // Se só um dos dois tipos estiver ativo, ele já é o bingo final.
+  function isFinalWinType(winType) {
+    if (winType === 'FULL') return true;
+    return winType === 'LINE' && !allowFullWin;
+  }
+
+  function notifyNewWinners(previousWinners, currentWinners) {
+    const previous = previousWinners || [];
+    const current = currentWinners || [];
+    current
+      .filter((w) => !previous.some((p) => p.playerId === w.playerId && p.winType === w.winType))
+      .filter((w) => isFinalWinType(w.winType))
+      .forEach(showBingoToast);
+  }
+
+  // ---------------------------------------------------------
+  // Splash de fim de jogo (verde se venceu, vermelho se não)
+  // ---------------------------------------------------------
+
+  function showEndGameSplash() {
+    if (session.host || !cardSplashEl) return;
+    const won = myWinTypes.size > 0;
+    cardSplashEl.classList.remove('splash-win', 'splash-lose', 'is-active');
+    void cardSplashEl.offsetWidth; // força reflow pra reiniciar a animação
+    cardSplashEl.classList.add(won ? 'splash-win' : 'splash-lose', 'is-active');
+  }
+
+  // ---------------------------------------------------------
   // Host — jogadores
   // ---------------------------------------------------------
 
@@ -283,6 +347,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (finishGameBtn) finishGameBtn.disabled = true;
     claimLineBtn.disabled = true;
     claimFullBtn.disabled = true;
+    showEndGameSplash();
   }
 
   // ---------------------------------------------------------
@@ -318,6 +383,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     allowFullWin    = gameState.allowFullWin;
     card            = cardData;
     players         = roomPlayers;
+
+    winnersCache = winners || [];
 
     renderDrawnNumbers();
     renderWinners(winners);
@@ -380,6 +447,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   BingoSocket.on('BINGO_CONFIRMED', async () => {
     try {
       const winners = await Api.getWinners(session.roomId);
+      notifyNewWinners(winnersCache, winners);
+      winnersCache = winners || [];
       renderWinners(winners);
       applyWinnersState(winners);
     } catch (err) {
@@ -387,7 +456,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  BingoSocket.on('GAME_FINISHED', () => {
+  BingoSocket.on('GAME_FINISHED', async () => {
+    try {
+      const winners = await Api.getWinners(session.roomId);
+      winnersCache = winners || [];
+      renderWinners(winners);
+      applyWinnersState(winners);
+    } catch (_) {
+      // segue com o estado local mais recente caso a busca falhe
+    }
     endGame('Fim de jogo! Confira os vencedores abaixo.');
   });
 

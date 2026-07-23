@@ -25,6 +25,8 @@
     <div id="game-over-banner" class="game-over-banner" hidden></div>
   </div>
 
+  <div class="bingo-toast-container" id="bingo-toast-container" aria-live="polite"></div>
+
   <main class="container page-game">
 
     <div class="card-panel panel-hero last-number">
@@ -40,7 +42,10 @@
     <div class="card-panel panel-card">
       <h2>Sua cartela</h2>
       <p class="text-muted" id="mark-mode-hint"></p>
-      <div class="bingo-card" id="bingo-card"></div>
+      <div class="bingo-card-container" id="bingo-card-container">
+        <div class="card-splash" id="card-splash" aria-hidden="true"></div>
+        <div class="bingo-card" id="bingo-card"></div>
+      </div>
       <div class="action-row">
         <button id="claim-line-btn" class="btn btn-secondary">Bingo (linha)</button>
         <button id="claim-full-btn" class="btn btn-success">Bingo (cartela cheia)</button>
