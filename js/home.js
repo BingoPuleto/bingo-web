@@ -16,6 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
     errorBox.hidden = true;
   }
 
+  // Coloca/tira o botão de um form em estado de carregamento, trocando o
+  // texto e mostrando um spinner, sem perder o label original.
+  function setButtonLoading(button, isLoading, loadingText) {
+    if (isLoading) {
+      button.dataset.originalText = button.textContent;
+      button.disabled = true;
+      button.classList.add('btn-loading');
+      button.innerHTML = `<span class="btn-spinner" aria-hidden="true"></span> ${loadingText}`;
+    } else {
+      button.disabled = false;
+      button.classList.remove('btn-loading');
+      button.textContent = button.dataset.originalText || button.textContent;
+    }
+  }
+
   // Alterna entre a aba "Criar sala" e "Entrar em sala".
   tabButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -35,6 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const nickname = document.getElementById('host-nickname').value.trim();
     if (!nickname) return showError('Informe seu nome.');
 
+    const submitBtn = createForm.querySelector('button[type="submit"]');
+    setButtonLoading(submitBtn, true, 'Criando sala...');
+
     try {
       const room = await Api.createRoom(nickname);
       const host = room.players[0];
@@ -51,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       window.location.href = 'pages/room.html';
     } catch (err) {
+      setButtonLoading(submitBtn, false);
       showError(err.message);
     }
   });
@@ -64,6 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!roomCode || !nickname) {
       return showError('Preencha o código da sala e seu nome.');
     }
+
+    const submitBtn = joinForm.querySelector('button[type="submit"]');
+    setButtonLoading(submitBtn, true, 'Entrando...');
 
     try {
       const player = await Api.joinRoom(roomCode, nickname);
@@ -80,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       window.location.href = 'pages/room.html';
     } catch (err) {
+      setButtonLoading(submitBtn, false);
       showError(err.message);
     }
   });

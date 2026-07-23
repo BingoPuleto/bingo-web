@@ -101,9 +101,9 @@ const Voice = (() => {
     try {
       let text;
 
-      if (BINGO_CALLS[number]) text = `${BINGO_CALLS[number]}, Número ${number}`;
+      if (number === 69) text = `Lá ele! Número ${number}`;
+      else if (BINGO_CALLS[number]) text = `${BINGO_CALLS[number]}, Número ${number}`;
       else if (BINGO_CALLS_NOREPEAT[number]) text = `Número ${BINGO_CALLS_NOREPEAT[number]}`;
-      else if (number === 69) text = `Lá ele! Número ${number}`;
       else text = `Número ${number}`;  
 
       const utterance = new SpeechSynthesisUtterance(text);
