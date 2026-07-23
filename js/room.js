@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const errorBox = document.getElementById('error-box');
   const roomCodeValue = document.getElementById('room-code-value');
+  const copyRoomCodeBtn = document.getElementById('copy-room-code-btn');
   const playerCount = document.getElementById('player-count');
   const playerList = document.getElementById('player-list');
   const markModeValue = document.getElementById('mark-mode-value');
@@ -117,6 +118,40 @@ document.addEventListener('DOMContentLoaded', async () => {
     BingoSocket.disconnect();
     window.location.href = 'game.html';
   }
+
+  async function copyRoomCode() {
+    const code = session.roomCode;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(code);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = code;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+      }
+
+      copyRoomCodeBtn.classList.add('is-copied');
+      copyRoomCodeBtn.querySelector('.icon-copy').hidden = true;
+      copyRoomCodeBtn.querySelector('.icon-check').hidden = false;
+      copyRoomCodeBtn.setAttribute('title', 'Copiado!');
+
+      setTimeout(() => {
+        copyRoomCodeBtn.classList.remove('is-copied');
+        copyRoomCodeBtn.querySelector('.icon-copy').hidden = false;
+        copyRoomCodeBtn.querySelector('.icon-check').hidden = true;
+        copyRoomCodeBtn.setAttribute('title', 'Copiar código');
+      }, 1800);
+    } catch (err) {
+      showError('Não foi possível copiar o código. Copie manualmente: ' + code);
+    }
+  }
+
+  copyRoomCodeBtn.addEventListener('click', copyRoomCode);
 
   try {
     roomCodeValue.textContent = session.roomCode;
