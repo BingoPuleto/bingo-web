@@ -180,6 +180,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   BingoSocket.on('PLAYER_LEFT', (player) => {
+    // Disparado tanto em saída voluntária quanto em queda de conexão
+    // (reconexão do WebSocket). Nunca deve afetar o próprio jogador que
+    // recebeu o evento sobre si mesmo (ele já não está mais conectado
+    // quando isso acontece de verdade).
+    if (player.id === session.playerId) return;
+
+    const existing = players.find((p) => p.id === player.id);
+    if (existing) {
+      existing.connected = player.connected;
+      renderPlayers();
+    }
+  });
+
+  BingoSocket.on('PLAYER_KICKED', (player) => {
     if (player.id === session.playerId) {
       alert('Você foi removido da sala pelo host.');
       Storage.clear();
