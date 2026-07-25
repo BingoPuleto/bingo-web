@@ -268,8 +268,15 @@ body:not(.is-host) .panel-footer  { grid-area: footer; }
 
 .bingo-card .cell[role='button'] { cursor: pointer; }
 
-.bingo-card .cell:hover:not(.free)  { border-color: var(--accent-draw); }
-.bingo-card .cell:active:not(.free) { transform: scale(0.96); }
+.bingo-card .cell:hover:not(.free):not(.locked)  { border-color: var(--accent-draw); }
+.bingo-card .cell:active:not(.free):not(.locked) { transform: scale(0.96); }
+
+/* Célula marcada é definitiva: sem cursor de clique, sem efeito de hover/active
+   que sugira que o estado pode ser alterado. */
+.bingo-card .cell.locked {
+  cursor: default;
+  pointer-events: none;
+}
 
 /* ---------------------------------------------------------
    Winners list

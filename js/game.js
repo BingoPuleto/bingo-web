@@ -123,12 +123,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       cell.dataset.number = item.number;
 
       const isDrawn = drawnNumbers.includes(item.number);
+      // Uma vez marcado (automática ou manualmente), o número fica
+      // permanentemente travado: `manuallyMarked` nunca perde uma entrada,
+      // então esse estado é irreversível pelo resto da partida.
       const isMarked = autoMarkNumbers ? isDrawn : manuallyMarked.has(item.number);
-      if (isMarked) cell.classList.add('marked');
-
-      // No modo manual, só faz sentido poder clicar em números já
-      // sorteados (não dá pra "adivinhar" e marcar antes da hora).
-      if (!autoMarkNumbers && isDrawn) {
+      if (isMarked) {
+        cell.classList.add('marked', 'locked');
+        cell.setAttribute('aria-disabled', 'true');
+        // Célula já marcada: nunca recebe role/tabindex/click de marcação,
+        // então não existe caminho de interação que a desmarque.
+      } else if (!autoMarkNumbers && isDrawn) {
+        // No modo manual, só faz sentido poder clicar em números já
+        // sorteados (não dá pra "adivinhar" e marcar antes da hora).
         cell.setAttribute('role', 'button');
         cell.setAttribute('tabindex', '0');
       }
@@ -137,30 +143,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  function toggleManualMark(number) {
+  function markNumber(number) {
     if (autoMarkNumbers) return;
     if (!drawnNumbers.includes(number)) return; // não deixa marcar número que ainda não saiu
+    if (manuallyMarked.has(number)) return; // já marcado: transição marcado -> não marcado nunca ocorre
 
-    if (manuallyMarked.has(number)) {
-      manuallyMarked.delete(number);
-    } else {
-      manuallyMarked.add(number);
-    }
+    manuallyMarked.add(number);
     renderCard();
   }
 
   bingoCardEl.addEventListener('click', (event) => {
     const cell = event.target.closest('.cell[data-number]');
     if (!cell) return;
-    toggleManualMark(Number(cell.dataset.number));
+    if (cell.classList.contains('locked')) return; // célula travada: ignora qualquer clique
+    markNumber(Number(cell.dataset.number));
   });
 
   bingoCardEl.addEventListener('keydown', (event) => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     const cell = event.target.closest('.cell[data-number]');
     if (!cell) return;
+    if (cell.classList.contains('locked')) return; // célula travada: ignora qualquer atalho
     event.preventDefault();
-    toggleManualMark(Number(cell.dataset.number));
+    markNumber(Number(cell.dataset.number));
   });
 
   function renderWinners(winners) {
