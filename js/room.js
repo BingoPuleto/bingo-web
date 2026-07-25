@@ -28,10 +28,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   let autoMarkNumbers = true;
   let allowLineWin = true;
   let allowFullWin = true;
+  let isStartingGame = false;
 
   function showError(message) {
     errorBox.textContent = message;
     errorBox.hidden = false;
+  }
+
+  // Mesmo padrão de loading/skeleton já usado no botão "Entrar na Sala" (home.js).
+  function setButtonLoading(button, isLoading, loadingText) {
+    if (isLoading) {
+      button.dataset.originalText = button.textContent;
+      button.disabled = true;
+      button.classList.add('btn-loading');
+      button.innerHTML = `<span class="btn-spinner" aria-hidden="true"></span> ${loadingText}`;
+    } else {
+      button.disabled = false;
+      button.classList.remove('btn-loading');
+      button.textContent = button.dataset.originalText || button.textContent;
+    }
   }
 
   function pushSettings() {
@@ -90,7 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       playerList.appendChild(li);
     });
 
-    if (session.host) {
+    if (session.host && !isStartingGame) {
       startGameBtn.disabled = players.length < 2;
     }
   }
@@ -204,7 +219,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   BingoSocket.connect({
     token: session.token,
     roomId: session.roomId,
-    onError: (message) => showError(message),
+    onError: (message) => {
+      showError(message);
+      if (isStartingGame) {
+        isStartingGame = false;
+        setButtonLoading(startGameBtn, false);
+        startGameBtn.disabled = players.length < 2;
+      }
+    },
   });
 
   BingoSocket.on('PLAYER_JOINED', (player) => {
@@ -251,7 +273,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   BingoSocket.on('GAME_STARTED', goToGame);
 
   startGameBtn.addEventListener('click', () => {
+    if (isStartingGame) return; // impede múltiplos cliques enquanto a operação está em andamento
+
+    isStartingGame = true;
+    setButtonLoading(startGameBtn, true, 'Iniciando...');
     BingoSocket.startGame(session.roomId);
+    // Em caso de sucesso: GAME_STARTED -> goToGame() navega para game.html,
+    // então o botão permanece desabilitado (nenhum reset de estado nesse caminho).
+    // Em caso de falha: tratado no onError do BingoSocket.connect, que restaura o botão.
   });
 
   leaveRoomBtn.addEventListener('click', async () => {

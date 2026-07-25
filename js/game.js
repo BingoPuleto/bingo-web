@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const bingoToastContainer = document.getElementById('bingo-toast-container');
   const voiceAnnouncementToggle = document.getElementById('voice-announcement-toggle');
   const voiceAnnouncementStatus = document.getElementById('voice-announcement-status');
+  const DRAW_COOLDOWN_MS = 3000;
+  let drawCooldownActive = false;
 
   const BINGO_LETTERS = ['B', 'I', 'N', 'G', 'O'];
 
@@ -355,6 +357,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     showEndGameSplash();
   }
 
+    function drawNumberWithCooldown() {
+    if (drawCooldownActive || gameFinished) return; // ignora cliques durante o cooldown
+
+    drawCooldownActive = true;
+    drawNumberBtn.disabled = true;
+    BingoSocket.drawNumber(session.roomId);
+
+    setTimeout(() => {
+      drawCooldownActive = false;
+      if (!gameFinished) drawNumberBtn.disabled = false;
+    }, DRAW_COOLDOWN_MS);
+  }
+
   // ---------------------------------------------------------
   // Init
   // ---------------------------------------------------------
@@ -409,9 +424,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       autoDrawToggle.addEventListener('change', applyAutoDraw);
       autoDrawInterval.addEventListener('change', applyAutoDraw);
 
-      drawNumberBtn.addEventListener('click', () => {
-        BingoSocket.drawNumber(session.roomId);
-      });
+      drawNumberBtn.addEventListener('click', drawNumberWithCooldown);
 
       finishGameBtn.addEventListener('click', () => {
         if (!confirm('Tem certeza que deseja encerrar o jogo? Isso não pode ser desfeito.')) return;
